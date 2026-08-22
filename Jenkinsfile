@@ -83,8 +83,5 @@ pipeline {
             echo 'Pipeline failed — inspect the stage that went red.'
         }
 
-        always {
-            cleanWs()
-        }
     }
 }
