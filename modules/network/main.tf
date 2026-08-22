@@ -19,7 +19,7 @@ resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_cidr
   availability_zone       = var.availability_zone
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "experiment2-public-subnet"
@@ -94,16 +94,16 @@ resource "aws_security_group" "web" {
   description = "Security group for web servers"
   vpc_id      = aws_vpc.main.id
 
-  # HTTP access
+  # HTTP access only from administrator network
   ingress {
-    description = "HTTP"
+    description = "HTTP from administrator"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.admin_cidr]
   }
 
-  # SSH only from your IP
+  # SSH only from administrator IP
   ingress {
     description = "SSH from administrator"
     from_port   = 22
@@ -112,12 +112,13 @@ resource "aws_security_group" "web" {
     cidr_blocks = [var.admin_cidr]
   }
 
-  # Allow outbound traffic
+  # HTTPS outbound traffic
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS outbound"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.admin_cidr]
   }
 
   tags = {
@@ -136,7 +137,7 @@ resource "aws_security_group" "db" {
   description = "Security group for database server"
   vpc_id      = aws_vpc.main.id
 
-  # Allow traffic only from the Web Security Group
+  # Allow traffic only from Web Security Group
   ingress {
     description     = "Traffic from web servers"
     from_port       = 80
@@ -145,12 +146,13 @@ resource "aws_security_group" "db" {
     security_groups = [aws_security_group.web.id]
   }
 
-  # Allow outbound traffic
+  # Allow HTTPS outbound traffic only
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    description     = "HTTPS outbound"
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.web.id]
   }
 
   tags = {
