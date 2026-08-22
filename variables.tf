@@ -23,7 +23,7 @@ variable "admin_cidr" {
 }
 
 variable "web_count" {
-  type = number
+  type        = number
   description = "Number of web servers"
 }
 
