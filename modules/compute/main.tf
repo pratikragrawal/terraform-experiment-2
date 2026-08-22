@@ -27,6 +27,17 @@ resource "aws_instance" "web" {
 
   key_name = var.key_name
 
+  # Security: Require IMDSv2
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
+  # Security: Encrypt root volume
+  root_block_device {
+    encrypted = true
+  }
+
   tags = {
     Name = "web-${count.index + 1}"
     Tier = "web"
@@ -45,6 +56,17 @@ resource "aws_instance" "db" {
   depends_on = [
     aws_instance.web
   ]
+
+  # Security: Require IMDSv2
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
+  # Security: Encrypt root volume
+  root_block_device {
+    encrypted = true
+  }
 
   tags = {
     Name = "database"
