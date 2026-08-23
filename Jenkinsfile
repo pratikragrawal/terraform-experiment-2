@@ -6,7 +6,7 @@ pipeline {
         timestamps()
         buildDiscarder(logRotator(numToKeepStr: '20'))
     }
-         triggers {
+    triggers {
         pollSCM('H/5 * * * *')
     }
     environment {
