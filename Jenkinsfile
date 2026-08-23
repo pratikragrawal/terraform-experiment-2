@@ -5,7 +5,9 @@ pipeline {
         timestamps()
         buildDiscarder(logRotator(numToKeepStr: '20'))
     }
-
+         triggers {
+        pollSCM('H/5 * * * *')
+    }
     environment {
         AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
