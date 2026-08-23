@@ -25,7 +25,7 @@ pipeline {
             steps {
                 sh 'terraform fmt -check -recursive -diff'
                 sh 'rm -rf .terraform'
-                sh 'terraform init -input=false -reconfigure'
+                sh 'terraform init -input=false -force-copy'
                 sh 'terraform validate'
             }
         }
@@ -83,6 +83,5 @@ pipeline {
         failure {
             echo 'Pipeline failed — inspect the stage that went red.'
         }
-
     }
 }
