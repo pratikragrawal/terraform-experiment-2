@@ -93,5 +93,6 @@ pipeline {
         }
     }
 }/ /   a u t o m a t i c   t r i g g e r   t e s t 
+// Testing automatic SCM polling
  
  
