@@ -24,6 +24,7 @@ pipeline {
         stage('Validate') {
             steps {
                 sh 'terraform fmt -check -recursive -diff'
+                sh 'rm -rf .terraform'
                 sh 'terraform init -input=false -reconfigure'
                 sh 'terraform validate'
             }
