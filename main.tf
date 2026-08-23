@@ -1,4 +1,9 @@
 terraform {
+  backend "s3" {
+    bucket = "experiment2-terraform-state-581117995813"
+    key    = "experiment2/terraform.tfstate"
+    region = "ap-south-1"
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
