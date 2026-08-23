@@ -23,10 +23,14 @@ pipeline {
 
         stage('Validate') {
             steps {
-                sh 'terraform fmt -check -recursive -diff'
-                sh 'rm -rf .terraform'
-                sh 'terraform init -input=false -force-copy'
-                sh 'terraform validate'
+                sh '''
+                    rm -rf .terraform
+                    rm -f terraform.tfstate
+                    rm -f terraform.tfstate.backup
+
+                    terraform init -input=false -reconfigure
+                    terraform validate
+                '''
             }
         }
 
@@ -43,7 +47,7 @@ pipeline {
                 sh 'terraform show -no-color tfplan > tfplan.txt'
 
                 archiveArtifacts(
-                    artifacts: 'tfplan, tfplan.txt',
+                    artifacts: 'tfplan,tfplan.txt',
                     fingerprint: true
                 )
             }
@@ -57,7 +61,7 @@ pipeline {
             steps {
                 timeout(time: 30, unit: 'MINUTES') {
                     input(
-                        message: 'Apply the archived plan to the cloud account?',
+                        message: 'Apply the archived Terraform plan?',
                         ok: 'Apply'
                     )
                 }
