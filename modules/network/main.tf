@@ -109,7 +109,7 @@ resource "aws_security_group" "web" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["47.15.111.124/32"]
   }
 
   # HTTPS outbound traffic
