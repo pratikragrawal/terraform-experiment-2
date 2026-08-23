@@ -1,13 +1,13 @@
 pipeline {
     agent any
 
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+
     options {
         timestamps()
         buildDiscarder(logRotator(numToKeepStr: '20'))
-    }
-
-    triggers {
-        pollSCM('H/5 * * * *')
     }
 
     environment {
@@ -27,14 +27,10 @@ pipeline {
 
         stage('Validate') {
             steps {
-                sh '''
-                    rm -rf .terraform
-                    rm -f terraform.tfstate
-                    rm -f terraform.tfstate.backup
-
-                    terraform init -input=false -reconfigure
-                    terraform validate
-                '''
+                sh 'terraform fmt -check -recursive -diff'
+                sh 'rm -rf .terraform'
+                sh 'terraform init -input=false -reconfigure'
+                sh 'terraform validate'
             }
         }
 
@@ -51,7 +47,7 @@ pipeline {
                 sh 'terraform show -no-color tfplan > tfplan.txt'
 
                 archiveArtifacts(
-                    artifacts: 'tfplan,tfplan.txt',
+                    artifacts: 'tfplan, tfplan.txt',
                     fingerprint: true
                 )
             }
@@ -65,7 +61,7 @@ pipeline {
             steps {
                 timeout(time: 30, unit: 'MINUTES') {
                     input(
-                        message: 'Apply the archived Terraform plan?',
+                        message: 'Apply the archived plan to the cloud account?',
                         ok: 'Apply'
                     )
                 }
@@ -92,6 +88,4 @@ pipeline {
             echo 'Pipeline failed — inspect the stage that went red.'
         }
     }
-}/ /   a u t o m a t i c   t r i g g e r   t e s t 
-
- 
+}
