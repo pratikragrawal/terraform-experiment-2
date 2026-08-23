@@ -1,3 +1,4 @@
+// Testing automatic SCM polling
 pipeline {
     agent any
 
