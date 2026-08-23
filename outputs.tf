@@ -1,6 +1,6 @@
 output "web_public_ips" {
-  description = "Public IP addresses of the web servers"
-  value       = module.compute.web_public_ips
+description = "Public IP addresses of the web servers"
+value       = module.compute.web_public_ips
 }
 
 output "db_private_ip" {
